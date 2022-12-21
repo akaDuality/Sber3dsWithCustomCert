@@ -6,14 +6,71 @@
 //
 
 import UIKit
+import WebKit
 
 class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        
+        webView.navigationDelegate = self
+        let sber = URL(string: "https://sberbank.ru")!
+        webView.load(URLRequest(url: sber))
     }
 
-
+    @IBOutlet weak var webView: WKWebView!
+    
 }
 
+extension ViewController: WKNavigationDelegate {
+    func webView(
+        _ webView: WKWebView,
+        didReceive challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+    ) {
+        guard let serverTrust = challenge.protectionSpace.serverTrust else {
+            return completionHandler(.performDefaultHandling, nil)
+        }
+        
+        DispatchQueue.global(qos: .background).async {
+            let path = Bundle.main.url(forResource: "certificate", withExtension: "der")
+            let certData = try! Data(contentsOf: path!)
+    
+            guard let certificate = SecCertificateCreateWithData(nil, certData as CFData) else {
+                return completionHandler(.performDefaultHandling, nil)
+            }
+            
+            let anchors = [certificate]
+            
+            
+            SecTrustSetAnchorCertificates(serverTrust, anchors as CFArray);
+            SecTrustSetAnchorCertificatesOnly(serverTrust, true);
+
+            var error: CFError?
+            let isTrusted = SecTrustEvaluateWithError(serverTrust, &error);
+            
+            if isTrusted {
+                completionHandler(.useCredential, URLCredential(trust: serverTrust))
+            } else {
+                completionHandler(.performDefaultHandling, nil)
+            }
+        }
+    }
+}
+
+
+// https://developer.apple.com/library/archive/technotes/tn2232/_index.html#//apple_ref/doc/uid/DTS40012884
+
+//Custom Certificate Authority
+//If your server's certificate is issued by a certificate authority that is not trusted by the system by default, you can resolve the resulting server trust evaluation failure by including the certificate authority's root certificate in your program. The procedure is as follows:
+//
+//include a copy of the certificate authority's root certificate in your program
+//once you have the trust object, create a certificate object from the certificate data (SecCertificateCreateWithData) and then set that certificate as a trusted anchor for the trust object (SecTrustSetAnchorCertificates)
+//SecTrustSetAnchorCertificates sets a flag that prevents the trust object from trusting any other anchors; if you also want to trust the default system anchors, call SecTrustSetAnchorCertificatesOnly to clear that flag
+//evaluate the trust object as per usual
+
+//https://github.com/rnapier/practical-security/blob/master/SelfCert/SelfCert/Connection.m
+//https://fivedottwelve.com/blog/installing-custom-rootca-certificates-programmatically-with-swift/
+
+// openssl x509 -in russian_trusted_root_ca.cer -outform der -out certificate.der
