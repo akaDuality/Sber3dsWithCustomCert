@@ -70,7 +70,7 @@ extension ViewController: WKNavigationDelegate {
 
 ## Подставляем правильный сертификат
 
-Берем отсюда [https://www.gosuslugi.ru/crt](https://www.gosuslugi.ru/crt)
+Берем отсюда [https://www.gosuslugi.ru/crt](https://www.gosuslugi.ru/crt). Качайте андроидный сертификат, потому что для iOS он выдает профиль, а он нам не нужен. 
 
 Конвертируем .cer в .der, потому что iOS только в .der умеет работать.
 
