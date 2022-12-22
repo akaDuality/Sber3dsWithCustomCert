@@ -22,11 +22,16 @@ class ViewController: UIViewController {
     }
     
     private func prepareCertificates() {
-        let path = Bundle.main.url(forResource: "certificate", withExtension: "der")
-        let certData = try! Data(contentsOf: path!)
-
-        if let certificate = SecCertificateCreateWithData(nil, certData as CFData) {
-            certificates = [certificate]
+        DispatchQueue.global(qos: .userInitiated).async {
+            let path = Bundle.main.url(forResource: "certificate", withExtension: "der")
+            let certData = try! Data(contentsOf: path!)
+            
+            if let certificate = SecCertificateCreateWithData(nil, certData as CFData) {
+                DispatchQueue.main.async {
+                    self.certificates = [certificate]
+                }
+                
+            }
         }
     }
     
@@ -48,8 +53,10 @@ extension ViewController: WKNavigationDelegate {
             }
 
             if self.checkValidity(of: serverTrust) {
+                // Allow our sertificate
                 completionHandler(.useCredential, URLCredential(trust: serverTrust))
             } else {
+                // Default check for another connections
                 completionHandler(.performDefaultHandling, nil)
             }
         }
