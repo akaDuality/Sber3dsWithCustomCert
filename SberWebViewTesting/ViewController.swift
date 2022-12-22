@@ -46,19 +46,23 @@ extension ViewController: WKNavigationDelegate {
             guard let serverTrust = challenge.protectionSpace.serverTrust else {
                 return completionHandler(.performDefaultHandling, nil)
             }
-            
-            SecTrustSetAnchorCertificates(serverTrust, self.certificates as CFArray);
-            SecTrustSetAnchorCertificatesOnly(serverTrust, true);
 
-            var error: CFError?
-            let isTrusted = SecTrustEvaluateWithError(serverTrust, &error);
-            
-            if isTrusted {
+            if self.checkValidity(of: serverTrust) {
                 completionHandler(.useCredential, URLCredential(trust: serverTrust))
             } else {
                 completionHandler(.performDefaultHandling, nil)
             }
         }
+    }
+    
+    private func checkValidity(of serverTrust: SecTrust) -> Bool {
+        SecTrustSetAnchorCertificates(serverTrust, self.certificates as CFArray);
+        SecTrustSetAnchorCertificatesOnly(serverTrust, true);
+
+        var error: CFError?
+        let isTrusted = SecTrustEvaluateWithError(serverTrust, &error);
+        
+        return isTrusted
     }
 }
 
