@@ -4,26 +4,17 @@
 
 В примере проверяю доступность sberbank.ru, у него такое же состояние как и у экранов 3ds.
 
-## Разрешаем сберу чуть больше чем остальным
+## Скорее всего у вас уже стоит этот флаг в Info.plist: он нужен чтобы вообще уметь хоть что-то грузить в WKWebView. На ревью Apple спросит зачем вам, расскажите про 3ds.
 
-Ослабляем правила для Сбера в Info.plist
 ```
 <key>NSAppTransportSecurity</key>
-<dict>
-  <key>NSExceptionDomains</key>
-  <dict>
-    <key>sberbank.ru</key>
-    <dict>
-      <key>NSExceptionAllowsInsecureHTTPLoads</key>
-      <true/>
-      <key>NSIncludesSubdomains</key>
-      <true/>
-    </dict>
-  </dict>
-</dict>
+	<dict>
+		<key>NSAllowsArbitraryLoadsInWebContent</key>
+		<true/>
+	</dict>
 ```
 
-## Но проверяем что мы можем ему доверять
+## Все экраны будут проходить челендж, но Сбербанк не сможет пройти дефолтные проверки. Поэтому нам надо проверять сертификат вручную. 
 
 ```swift
 override func viewDidLoad() {
@@ -41,33 +32,29 @@ extension ViewController: WKNavigationDelegate {
         didReceive challenge: URLAuthenticationChallenge,
         completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
     ) {
-        guard let serverTrust = challenge.protectionSpace.serverTrust else {
-            return completionHandler(.performDefaultHandling, nil)
-        }
-        
         DispatchQueue.global(qos: .background).async {
-            let path = Bundle.main.url(forResource: "certificate", withExtension: "der")
-            let certData = try! Data(contentsOf: path!)
-    
-            guard let certificate = SecCertificateCreateWithData(nil, certData as CFData) else {
+            guard let serverTrust = challenge.protectionSpace.serverTrust else {
                 return completionHandler(.performDefaultHandling, nil)
             }
-            
-            let anchors = [certificate]
-            
-            
-            SecTrustSetAnchorCertificates(serverTrust, anchors as CFArray);
-            SecTrustSetAnchorCertificatesOnly(serverTrust, true);
 
-            var error: CFError?
-            let isTrusted = SecTrustEvaluateWithError(serverTrust, &error);
-            
-            if isTrusted {
+            if self.checkValidity(of: serverTrust) {
+                // Allow our sertificate
                 completionHandler(.useCredential, URLCredential(trust: serverTrust))
             } else {
+                // Default check for another connections
                 completionHandler(.performDefaultHandling, nil)
             }
         }
+    }
+    
+    private func checkValidity(of serverTrust: SecTrust) -> Bool {
+        SecTrustSetAnchorCertificates(serverTrust, self.certificates as CFArray);
+        SecTrustSetAnchorCertificatesOnly(serverTrust, true);
+
+        var error: CFError?
+        let isTrusted = SecTrustEvaluateWithError(serverTrust, &error);
+        
+        return isTrusted
     }
 }
 ```
