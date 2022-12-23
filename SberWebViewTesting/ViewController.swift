@@ -23,15 +23,23 @@ class ViewController: UIViewController {
     
     private func prepareCertificates() {
         DispatchQueue.global(qos: .userInitiated).async {
-            let path = Bundle.main.url(forResource: "certificate", withExtension: "der")
+            let names = ["Russian Trusted Root CA",
+                         "Russian Trusted Sub CA"]
+            let certificates = self.certificates(names)
+        
+            DispatchQueue.main.async {
+                self.certificates = certificates
+            }
+        }
+    }
+    
+    private func certificates(_ names: [String]) -> [SecCertificate] {
+        names.compactMap { name in
+            let path = Bundle.main.url(forResource: "Russian Trusted Root CA", withExtension: "der")
             let certData = try! Data(contentsOf: path!)
             
-            if let certificate = SecCertificateCreateWithData(nil, certData as CFData) {
-                DispatchQueue.main.async {
-                    self.certificates = [certificate]
-                }
-                
-            }
+            let certificate = SecCertificateCreateWithData(nil, certData as CFData)
+            return certificate
         }
     }
     
@@ -63,13 +71,21 @@ extension ViewController: WKNavigationDelegate {
     }
     
     private func checkValidity(of serverTrust: SecTrust) -> Bool {
-        SecTrustSetAnchorCertificates(serverTrust, self.certificates as CFArray);
-        SecTrustSetAnchorCertificatesOnly(serverTrust, true);
+        SecTrustSetAnchorCertificates(serverTrust, self.certificates as CFArray)
+        SecTrustSetAnchorCertificatesOnly(serverTrust, false)
 
         var error: CFError?
-        let isTrusted = SecTrustEvaluateWithError(serverTrust, &error);
+        let isTrusted = SecTrustEvaluateWithError(serverTrust, &error)
         
         return isTrusted
+    }
+    
+    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+        
+    }
+    
+    func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+        
     }
 }
 

@@ -16,8 +16,8 @@
 		1E950146295315F00051FE53 /* SberWebViewTestingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E950145295315F00051FE53 /* SberWebViewTestingTests.swift */; };
 		1E950150295315F00051FE53 /* SberWebViewTestingUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E95014F295315F00051FE53 /* SberWebViewTestingUITests.swift */; };
 		1E950152295315F00051FE53 /* SberWebViewTestingUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E950151295315F00051FE53 /* SberWebViewTestingUITestsLaunchTests.swift */; };
-		1E95015F295330070051FE53 /* russian_trusted_root_ca.cer in Resources */ = {isa = PBXBuildFile; fileRef = 1E95015E295330070051FE53 /* russian_trusted_root_ca.cer */; };
-		1E950161295333A30051FE53 /* certificate.der in Resources */ = {isa = PBXBuildFile; fileRef = 1E950160295333750051FE53 /* certificate.der */; };
+		1EE4EA022954911F0093FE49 /* Russian Trusted Sub CA.der in Resources */ = {isa = PBXBuildFile; fileRef = 1EE4EA01295490FA0093FE49 /* Russian Trusted Sub CA.der */; };
+		1EE4EA032954911F0093FE49 /* Russian Trusted Root CA.der in Resources */ = {isa = PBXBuildFile; fileRef = 1EE4EA00295490FA0093FE49 /* Russian Trusted Root CA.der */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,8 +51,8 @@
 		1E95014B295315F00051FE53 /* SberWebViewTestingUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SberWebViewTestingUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1E95014F295315F00051FE53 /* SberWebViewTestingUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SberWebViewTestingUITests.swift; sourceTree = "<group>"; };
 		1E950151295315F00051FE53 /* SberWebViewTestingUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SberWebViewTestingUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		1E95015E295330070051FE53 /* russian_trusted_root_ca.cer */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = russian_trusted_root_ca.cer; sourceTree = "<group>"; };
-		1E950160295333750051FE53 /* certificate.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = certificate.der; sourceTree = "<group>"; };
+		1EE4EA00295490FA0093FE49 /* Russian Trusted Root CA.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Russian Trusted Root CA.der"; sourceTree = "<group>"; };
+		1EE4EA01295490FA0093FE49 /* Russian Trusted Sub CA.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Russian Trusted Sub CA.der"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,8 +106,8 @@
 				1E95012E295315EE0051FE53 /* AppDelegate.swift */,
 				1E950130295315EE0051FE53 /* SceneDelegate.swift */,
 				1E950132295315EE0051FE53 /* ViewController.swift */,
-				1E95015E295330070051FE53 /* russian_trusted_root_ca.cer */,
-				1E950160295333750051FE53 /* certificate.der */,
+				1EE4EA00295490FA0093FE49 /* Russian Trusted Root CA.der */,
+				1EE4EA01295490FA0093FE49 /* Russian Trusted Sub CA.der */,
 				1E950134295315EE0051FE53 /* Main.storyboard */,
 				1E950137295315EF0051FE53 /* Assets.xcassets */,
 				1E950139295315EF0051FE53 /* LaunchScreen.storyboard */,
@@ -237,11 +237,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1E95015F295330070051FE53 /* russian_trusted_root_ca.cer in Resources */,
 				1E95013B295315EF0051FE53 /* LaunchScreen.storyboard in Resources */,
-				1E950161295333A30051FE53 /* certificate.der in Resources */,
+				1EE4EA022954911F0093FE49 /* Russian Trusted Sub CA.der in Resources */,
 				1E950138295315EF0051FE53 /* Assets.xcassets in Resources */,
 				1E950136295315EE0051FE53 /* Main.storyboard in Resources */,
+				1EE4EA032954911F0093FE49 /* Russian Trusted Root CA.der in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -445,7 +445,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = P67Q4Q7HA9;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SberWebViewTesting/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -473,7 +473,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = P67Q4Q7HA9;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SberWebViewTesting/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
