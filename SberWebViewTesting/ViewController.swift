@@ -23,7 +23,7 @@ class ViewController: UIViewController {
             await validator.prepareCertificates(names)
         }
         
-        let url = URL(string: "https://sberbank.ru")!
+        let url = URL(string: "https://3dsecmt.sberbank.ru/payment/se/keys.do")!
         webView.load(URLRequest(url: url))
     }
 
@@ -40,10 +40,11 @@ extension ViewController: WKNavigationDelegate {
             return completionHandler(.performDefaultHandling, nil)
         }
         
-        Task {
-            if await validator.checkValidity(of: serverTrust) {
+        Task.detached(priority: .userInitiated) {
+            if await self.validator.checkValidity(of: serverTrust) {
                 // Allow our sertificate
-                completionHandler(.useCredential, URLCredential(trust: serverTrust))
+                let cred = URLCredential(trust: serverTrust)
+                completionHandler(.useCredential, cred)
             } else {
                 // Default check for another connections
                 completionHandler(.performDefaultHandling, nil)
