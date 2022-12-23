@@ -15,9 +15,9 @@ actor CertificateValidator {
         return certificate
     }
     
-    func checkValidity(of serverTrust: SecTrust) -> Bool {
+    func checkValidity(of serverTrust: SecTrust, anchorCertificatesOnly: Bool = false) -> Bool {
         SecTrustSetAnchorCertificates(serverTrust, certificates as CFArray)
-        SecTrustSetAnchorCertificatesOnly(serverTrust, true)
+        SecTrustSetAnchorCertificatesOnly(serverTrust, anchorCertificatesOnly)
 
         var error: CFError?
         let isTrusted = SecTrustEvaluateWithError(serverTrust, &error)
