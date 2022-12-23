@@ -22,6 +22,9 @@ class ViewController: UIViewController {
                          "Russian Trusted Sub CA"]
             await validator.prepareCertificates(names)
         }
+        
+        let url = URL(string: "https://sberbank.ru")!
+        webView.load(URLRequest(url: url))
     }
 
     @IBOutlet weak var webView: WKWebView!
