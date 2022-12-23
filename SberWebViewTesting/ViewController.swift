@@ -10,43 +10,21 @@ import WebKit
 
 class ViewController: UIViewController {
 
+    let validator = CertificateValidator()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
         
         webView.navigationDelegate = self
-        let sber = URL(string: "https://sberbank.ru")!
-        webView.load(URLRequest(url: sber))
-        
-        prepareCertificates()
-    }
     
-    private func prepareCertificates() {
-        DispatchQueue.global(qos: .userInitiated).async {
+        Task {
             let names = ["Russian Trusted Root CA",
                          "Russian Trusted Sub CA"]
-            let certificates = self.certificates(names)
-        
-            DispatchQueue.main.async {
-                self.certificates = certificates
-            }
+            await validator.prepareCertificates(names)
         }
     }
-    
-    private func certificates(_ names: [String]) -> [SecCertificate] {
-        names.compactMap { name in
-            let path = Bundle.main.url(forResource: "Russian Trusted Root CA", withExtension: "der")
-            let certData = try! Data(contentsOf: path!)
-            
-            let certificate = SecCertificateCreateWithData(nil, certData as CFData)
-            return certificate
-        }
-    }
-    
-    var certificates = [SecCertificate]()
 
     @IBOutlet weak var webView: WKWebView!
-    
 }
 
 extension ViewController: WKNavigationDelegate {
@@ -55,12 +33,12 @@ extension ViewController: WKNavigationDelegate {
         didReceive challenge: URLAuthenticationChallenge,
         completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
     ) {
-        DispatchQueue.global(qos: .background).async {
-            guard let serverTrust = challenge.protectionSpace.serverTrust else {
-                return completionHandler(.performDefaultHandling, nil)
-            }
-
-            if self.checkValidity(of: serverTrust) {
+        guard let serverTrust = challenge.protectionSpace.serverTrust else {
+            return completionHandler(.performDefaultHandling, nil)
+        }
+        
+        Task {
+            if await validator.checkValidity(of: serverTrust) {
                 // Allow our sertificate
                 completionHandler(.useCredential, URLCredential(trust: serverTrust))
             } else {
@@ -69,17 +47,7 @@ extension ViewController: WKNavigationDelegate {
             }
         }
     }
-    
-    private func checkValidity(of serverTrust: SecTrust) -> Bool {
-        SecTrustSetAnchorCertificates(serverTrust, self.certificates as CFArray)
-        SecTrustSetAnchorCertificatesOnly(serverTrust, false)
 
-        var error: CFError?
-        let isTrusted = SecTrustEvaluateWithError(serverTrust, &error)
-        
-        return isTrusted
-    }
-    
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
         
     }
@@ -88,19 +56,3 @@ extension ViewController: WKNavigationDelegate {
         
     }
 }
-
-
-// https://developer.apple.com/library/archive/technotes/tn2232/_index.html#//apple_ref/doc/uid/DTS40012884
-
-// Custom Certificate Authority
-// If your server's certificate is issued by a certificate authority that is not trusted by the system by default, you can resolve the resulting server trust evaluation failure by including the certificate authority's root certificate in your program. The procedure is as follows:
-//
-// include a copy of the certificate authority's root certificate in your program
-// once you have the trust object, create a certificate object from the certificate data (SecCertificateCreateWithData) and then set that certificate as a trusted anchor for the trust object (SecTrustSetAnchorCertificates)
-// SecTrustSetAnchorCertificates sets a flag that prevents the trust object from trusting any other anchors; if you also want to trust the default system anchors, call SecTrustSetAnchorCertificatesOnly to clear that flag
-// evaluate the trust object as per usual
-
-//https://github.com/rnapier/practical-security/blob/master/SelfCert/SelfCert/Connection.m
-//https://fivedottwelve.com/blog/installing-custom-rootca-certificates-programmatically-with-swift/
-
-// openssl x509 -in russian_trusted_root_ca.cer -outform der -out certificate.der

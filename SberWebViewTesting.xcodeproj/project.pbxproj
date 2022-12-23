@@ -18,6 +18,7 @@
 		1E950152295315F00051FE53 /* SberWebViewTestingUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E950151295315F00051FE53 /* SberWebViewTestingUITestsLaunchTests.swift */; };
 		1EE4EA022954911F0093FE49 /* Russian Trusted Sub CA.der in Resources */ = {isa = PBXBuildFile; fileRef = 1EE4EA01295490FA0093FE49 /* Russian Trusted Sub CA.der */; };
 		1EE4EA032954911F0093FE49 /* Russian Trusted Root CA.der in Resources */ = {isa = PBXBuildFile; fileRef = 1EE4EA00295490FA0093FE49 /* Russian Trusted Root CA.der */; };
+		1EE4E9FF295452D60093FE49 /* CertificateValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EE4E9FE295452D60093FE49 /* CertificateValidator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +54,7 @@
 		1E950151295315F00051FE53 /* SberWebViewTestingUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SberWebViewTestingUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		1EE4EA00295490FA0093FE49 /* Russian Trusted Root CA.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Russian Trusted Root CA.der"; sourceTree = "<group>"; };
 		1EE4EA01295490FA0093FE49 /* Russian Trusted Sub CA.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Russian Trusted Sub CA.der"; sourceTree = "<group>"; };
+		1EE4E9FE295452D60093FE49 /* CertificateValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateValidator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,6 +110,7 @@
 				1E950132295315EE0051FE53 /* ViewController.swift */,
 				1EE4EA00295490FA0093FE49 /* Russian Trusted Root CA.der */,
 				1EE4EA01295490FA0093FE49 /* Russian Trusted Sub CA.der */,
+				1EE4E9FE295452D60093FE49 /* CertificateValidator.swift */,
 				1E950134295315EE0051FE53 /* Main.storyboard */,
 				1E950137295315EF0051FE53 /* Assets.xcassets */,
 				1E950139295315EF0051FE53 /* LaunchScreen.storyboard */,
@@ -267,6 +270,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1E950133295315EE0051FE53 /* ViewController.swift in Sources */,
+				1EE4E9FF295452D60093FE49 /* CertificateValidator.swift in Sources */,
 				1E95012F295315EE0051FE53 /* AppDelegate.swift in Sources */,
 				1E950131295315EE0051FE53 /* SceneDelegate.swift in Sources */,
 			);
