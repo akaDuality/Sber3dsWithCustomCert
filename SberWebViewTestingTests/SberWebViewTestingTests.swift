@@ -37,8 +37,8 @@ final class SberWebViewTestingTests: XCTestCase {
         XCTAssertTrue(areCertsValid)
     }
     
-    func test_shouwdBeInValidAt2050() async throws {
-        let date = DateComponents(calendar: .current, year: 2050, month: 1, day: 1).date!
+    func test_shouwdBeInvalidAt2028() async throws {
+        let date = DateComponents(calendar: .current, year: 2028, month: 1, day: 1).date!
         let areCertsValid = await sut.isCertificatesValid(at: date)
         XCTAssertFalse(areCertsValid)
     }
