@@ -10,27 +10,47 @@ import XCTest
 
 final class SberWebViewTestingTests: XCTestCase {
 
+    var sut: CertificateValidator!
+    
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+        sut = CertificateValidator()
+        let names = ["Russian Trusted Root CA",
+                     "Russian Trusted Sub CA"]
+        
+        Task {
+            await sut.prepareCertificates(names)
         }
     }
 
+    override func tearDown() {
+        sut = nil
+    }
+    
+    func test_shouldLoad2Certificates() async {
+        let certsCount = await sut.certificates.count
+        XCTAssertEqual(certsCount, 2)
+    }
+
+    func test_shouldBeValidAt2023() async throws {
+        let date = DateComponents(calendar: .current, year: 2023, month: 1, day: 1).date!
+        let areCertsValid = await sut.isCertificatesValid(at: date)
+        XCTAssertTrue(areCertsValid)
+    }
+    
+    func test_shouwdBeInValidAt2050() async throws {
+        let date = DateComponents(calendar: .current, year: 2050, month: 1, day: 1).date!
+        let areCertsValid = await sut.isCertificatesValid(at: date)
+        XCTAssertFalse(areCertsValid)
+    }
+    
+    func test_shouldBeValidNextYear() async throws {
+        var dateComponent = DateComponents()
+        dateComponent.year = 1
+        
+        let nextYear = Calendar.current.date(byAdding: dateComponent, to: Date())!
+        
+        let areCertsValid = await sut.isCertificatesValid(at: nextYear)
+        XCTAssertTrue(areCertsValid, "Update certificate now to allow users update your application before certificates expires")
+        // https://www.gosuslugi.ru/crt
+    }
 }
